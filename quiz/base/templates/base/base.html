@@ -1,0 +1,15 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta http-equiv="X-UA-Compatible" content="ie-edge"/>
+        <title>{% block title %}Quiz - DevPro{% endblock title %}</title>
+        <link rel="stylesheet" href="{% static 'base/styles/app.css' %}"/>
+    </head>
+    {% block stylized_body %}<body>{% endblock stylized_body %}
+        {% block body %}{% endblock body %}
+    </body>
+    {% block scripts %}{% endblock scripts %}
+</html>
