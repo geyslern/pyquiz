@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from decouple import config, Csv
 from pathlib import Path
 
@@ -117,7 +118,49 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
+# Cloud storage settings
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default=None)
+if AWS_ACCESS_KEY_ID:
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="us-west-004")
+    AWS_S3_ENDPOINT = f"s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
+    AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_ENDPOINT}"
+
+    AWS_S3_STORAGE_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_PRELOAD_METADATA = True
+    AWS_AUTO_CREATE_BUCKET = False
+    AWS_QUERYSTRING_AUTH = True
+    AWS_S3_CUSTOM_DOMAIN = None
+    AWS_DEFAULT_ACL = "public-read"
+
+    # Static assets
+    STATICFILES_STORAGE = "s3_folder_storage.s3.StaticStorage"
+    STATIC_S3_PATH = "static"
+    STATIC_ROOT = f"/{STATIC_S3_PATH}/"
+    STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/{STATIC_S3_PATH}/"
+    ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
+
+    # Enable Collectfast
+    COLLECTFAST_ENABLED = config("COLLECTFAST_ENABLED", default=False, cast=bool)
+    # Config Collectfast
+    COLLECTFAST_STRATEGY = config("COLLECTFAST_STRATEGY", default="")
+
+
+    # Upload media folder
+    DEFAULT_FILE_STORAGE = "s3_folder_storage.s3.DefaultStorage"
+    DEFAULT_S3_PATH = "media"
+    MEDIA_ROOT = f"/{DEFAULT_S3_PATH}/"
+    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/{DEFAULT_S3_PATH}/"
+
+    INSTALLED_APPS.append("s3_folder_storage")
+    INSTALLED_APPS.append("storages")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

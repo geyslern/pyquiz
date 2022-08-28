@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load i18n static %}
 {% block stylized_body %}<body style="height: auto !important;">{% endblock stylized_body %}
 {% block body %}
         <div class="game-page">
@@ -39,4 +40,4 @@
             </div>
         </div>
 {% endblock body %}
-{% block scripts %}<script src="/static/base/js/script.js"></script>{% endblock scripts %}
+{% block scripts %}<script src="{% static 'base/js/script.js' %}"></script>{% endblock scripts %}
